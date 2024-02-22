@@ -2,6 +2,18 @@
 
 {% block body %}
 <h2>Create Listing</h2>
+<form action="{% url 'createlisting' %}" method="post">
+    {% csrf_token %}
+    <div class="form-group">
+        <label for="title">Title</label>
+        <input class="form-control" type="text" name="title" id="title" placeholder="Title">
+        <label for="description">Description</label>
+        <input class="form-control" type="text" name="description" id="description" placeholder="Description">
+        <label for="imageurl">Image URL</label>
+        <input class="form-control" type="text" name="imageurl" id="imageurl" placeholder="Image URL">
+        <label for="price">Price</label>
+        <input class="form-control" type="text" name="price" id="price" placeholder="Price">
 
-TODO
-{% endblock %}
+    </div>
+
+    {% endblock %}
