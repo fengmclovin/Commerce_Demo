@@ -8,7 +8,10 @@ from .models import User
 
 
 def index(request):
-    return render(request, "auctions/index.html")
+    activeListings = Listing.objects.filter(isActive=True)
+    return render(request, "auctions/index.html", {
+        "listings": activeListings
+    })
 
 
 def login_view(request):
@@ -72,4 +75,28 @@ def watchlist(request):
 
 
 def create_listing(request):
-    return render(request, "auctions/create.html")
+    if request.method == "GET":
+        allCategories = Category.objects.all()
+        return render(request, "auctions/create.html", {
+            "categories": allCategories
+        })
+    else:
+        title = request.POST["title"]
+        description = request.POST["description"]
+        imageURL = request.POST["imageurl"]
+        price = request.POST["price"]
+        category = request.POST["category"]
+        currentUser = request.user
+
+        categoryData = Category.objects.get(categoryName=category)
+
+        newListing = Listing(
+            title=title,
+            description=description,
+            imageURL=imageURL,
+            price=float(price),
+            category=categoryData,
+            owner=currentUser
+        )
+        newListing.save()
+        return HttpResponseRedirect(reverse(index))
