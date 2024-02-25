@@ -10,8 +10,21 @@ from .models import User
 def index(request):
     activeListings = Listing.objects.filter(isActive=True)
     return render(request, "auctions/index.html", {
-        "listings": activeListings
+        "listings": activeListings,
+        "categories": allCategories
     })
+
+def displayCategory(request):
+    if request.method == "POST":
+        categoryFromForm = request.POST['category']
+        category = Category.objects.get(categoryName=categoryFromForm)
+        activeListings = Listing.objects.filter(
+            isActive=True, category=category)
+        allCategories = Category.objects.all()
+        return render(request, "auctions/index.html", {
+            "listings": activeListings,
+            "categories": allCategories
+        })
 
 
 def login_view(request):
