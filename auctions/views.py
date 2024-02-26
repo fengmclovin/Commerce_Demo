@@ -4,8 +4,10 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 
-from .models import User
+from .models import User, Category, Listing
 
+def listing(request, id):
+    return render(request, "auctions/listing.html")
 
 def index(request):
     activeListings = Listing.objects.filter(isActive=True)
