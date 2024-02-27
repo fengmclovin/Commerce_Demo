@@ -1,7 +1,19 @@
 {% extends "auctions/layout.html" %}
 
 {% block body %}
-<h2>Current Listings</h2>
 
-TODO
+<div class="row">
+    {% if user.is_authenticated %}
+
+    {% else %}
+
+    {% endif %}
+</div>
+
+<h2>Listings: {{ listing.title }}</h2>
+<img class="card-img-top" src="{{ listing.imageURL }}" alt="{{ listing.title }}">
+<p>Details: {{ listing.description }}</p>
+<p>{{ listing.onwer }}</p>
+<h5>Price: ${{ listing.price }}</h5>
+
 {% endblock %}
