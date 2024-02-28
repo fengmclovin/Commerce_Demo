@@ -106,7 +106,11 @@ def category(request):
 
 
 def watchlist(request):
-    return render(request, "auctions/watchlist.html")
+    currentUser = request.user
+    listings = currentUser.listing_watchlist.all()
+    return render(request, "auctions/watchlist.html", {
+        "listings": listings
+    })
 
 
 def create_listing(request):
