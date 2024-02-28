@@ -2,10 +2,21 @@
 
 {% block body %}
 
-<div class="row">
+<div class="row mx-3">
     {% if user.is_authenticated %}
-
-    {% else %}
+        {% if isListingInWatchlist %}
+            <form action="{% url 'removewatchlist' id=listing.id %}" method="POST">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger" > Remove From Watchlist</button>
+            </form>
+        <h1>Remove</h1>
+        {% else %}
+            <form action="{% url 'addwatchlist' id=listing.id %}" method="POST">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-success" > Add To Watchlist</button>
+            </form>
+        <h1>Add</h1>
+        {% endif %}
 
     {% endif %}
 </div>
