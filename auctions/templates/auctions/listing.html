@@ -27,4 +27,20 @@
 <p>{{ listing.onwer }}</p>
 <h5>Price: ${{ listing.price }}</h5>
 
+<div class="row mx-3">
+    <h2>Comment</h2>
+    {% if user.is_authenticated %}
+        <form action="{% url 'addComment' id=listing.id %}" method="POST">
+            <input type="text" name="newComment" placeholder="Add New Comment">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-success" > Comment</button>
+        </form>
+
+    {% endif %}
+    <br>
+    <ul class="list-group">
+    {% for comment in allComments %}
+        <li class="list-group-item">{{ comment.message }}</li>
+    {% endfor %}
+
 {% endblock %}
