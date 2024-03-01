@@ -113,6 +113,20 @@ def watchlist(request):
     })
 
 
+def add_comment(request, id):
+    currentUser = request.user
+    listingData = Listing.objects.get(pk=id)
+    message = request.POST['newComment']
+
+    newComment = Comment(
+        author=currentUser,
+        listing=listingData,
+        message=message
+    )
+    newComment.save()
+    return HttpResponseRedirect(reverse("listing", args=(id, )))
+
+
 def create_listing(request):
     if request.method == "GET":
         allCategories = Category.objects.all()
