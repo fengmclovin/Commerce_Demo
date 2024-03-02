@@ -4,7 +4,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 
-from .models import User, Category, Listing, Comment
+from .models import User, Category, Listing, Comment, Bidding
 
 def listing(request, id):
     listingData = Listing.objects.get(pk=id)
