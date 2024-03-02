@@ -37,10 +37,15 @@
         </form>
 
     {% endif %}
-    <br>
+</div>
+<div>
     <ul class="list-group">
     {% for comment in allComments %}
-        <li class="list-group-item">{{ comment.message }}</li>
+        <li class="list-group-item">{{ comment.message }}
+        <br/>
+        <p> Posted by <strong>{{ comment.author }}</strong></p>
+        </li>
     {% endfor %}
+</div>
 
 {% endblock %}
