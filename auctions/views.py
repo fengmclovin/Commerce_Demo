@@ -143,11 +143,15 @@ def create_listing(request):
 
         categoryData = Category.objects.get(categoryName=category)
 
+        bid = Bidding(bid=float(price), user=currentUser)
+        bid.save()
+
+
         newListing = Listing(
             title=title,
             description=description,
             imageURL=imageURL,
-            price=float(price),
+            price=bid,
             category=categoryData,
             owner=currentUser
         )
