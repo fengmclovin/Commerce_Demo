@@ -113,6 +113,36 @@ def watchlist(request):
     })
 
 
+def add_bid(request, id):
+    newBid = request.POST['newBid']
+    listingData = Listing.objects.get(pk=id)
+
+    isListingInWatchlist = listingData.watchlist.filter(
+        id=request.user.id).exists()
+    allComments = Comment.objects.filter(listing=listingData)
+
+    if float(newBid) > listingData.price.bid:
+        updatedBid = Bidding(user=request.user, bid=newBid)
+        updatedBid.save()
+        listingData.price = updatedBid
+        listingData.save()
+        return render(request, "auctions/listing.html", {
+            "listing": listingData,
+            "message": "Bidding Accepted",
+            "update": True,
+            "isListingInWatchlist": isListingInWatchlist,
+            "allComments": allComments
+        })
+
+    else:
+        return render(request, "auctions/listing.html", {
+            "listing": listingData,
+            "message": "Bidding Denied",
+            "update": False,
+            "isListingInWatchlist": isListingInWatchlist,
+            "allComments": allComments
+        })
+
 def add_comment(request, id):
     currentUser = request.user
     listingData = Listing.objects.get(pk=id)
