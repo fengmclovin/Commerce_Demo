@@ -13,7 +13,28 @@ def listing(request, id):
         id=request.user.id).exists()
     return render(request, "auctions/listing.html", {
         "listing": listingData,
-        "isListingInWatchlist": isListingInWatchlist
+        "isListingInWatchlist": isListingInWatchlist,
+        "allComments": allComments,
+        "isOwner": isOwner
+    })
+
+def close_auction(request, id):
+    listingData = Listing.objects.get(pk=id)
+    listingData.isActive = False
+    listingData.save()
+    isOwner = request.user.username == listingData.owner.username
+
+    isListingInWatchlist = listingData.watchlist.filter(
+        id=request.user.id).exists()
+    allComments = Comment.objects.filter(listing=listingData)
+
+    return render(request, "auctions/listing.html", {
+        "listing": listingData,
+        "isListingInWatchlist": isListingInWatchlist,
+        "allComments": allComments,
+        "isOwner": isOwner,
+        "update": True,
+        "message": "Auction Closed"
     })
 
 def remove_watchlist(request, id):
@@ -121,6 +142,8 @@ def add_bid(request, id):
         id=request.user.id).exists()
     allComments = Comment.objects.filter(listing=listingData)
 
+    isOwner = request.user.username == listingData.owner.username
+
     if float(newBid) > listingData.price.bid:
         updatedBid = Bidding(user=request.user, bid=newBid)
         updatedBid.save()
@@ -131,7 +154,8 @@ def add_bid(request, id):
             "message": "Bidding Accepted",
             "update": True,
             "isListingInWatchlist": isListingInWatchlist,
-            "allComments": allComments
+            "allComments": allComments,
+            "isOwner": isOwner
         })
 
     else:
@@ -140,7 +164,8 @@ def add_bid(request, id):
             "message": "Bidding Denied",
             "update": False,
             "isListingInWatchlist": isListingInWatchlist,
-            "allComments": allComments
+            "allComments": allComments,
+            "isOwner": isOwner
         })
 
 def add_comment(request, id):
