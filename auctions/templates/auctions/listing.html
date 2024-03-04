@@ -2,8 +2,39 @@
 
 {% block body %}
 
+<div class="container">
+    {% if message %} 
+        {% if update %}
+        <div class="alert alert-success" role="alert">
+            {{ message }}
+        </div>
+        {% else %}
+        <div class="alert alert-danger" role="alert">
+            {{ message }}
+        </div>
+        {% endif %}
+
+    {% endif %}
+</div>
+
+<div class="container">
+{% if not listing.isActive and user == listing.price.user %}
+    <div class="alert alert-success" role="alert">   
+        {{ "Auction Won" }}
+    </div>
+{% endif %}
+</div>
+
 <div class="row mx-3">
-    {% if user.is_authenticated %}
+    {% if user.is_authenticated and listing.isActive %}
+        {% if isOwner %}
+            <form action="{% url 'closeAuction' id=listing.id %}" method="POST" class="mx-3">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger" > Close</button>
+            </form>
+
+        {% endif %}
+
         {% if isListingInWatchlist %}
             <form action="{% url 'removewatchlist' id=listing.id %}" method="POST">
                 {% csrf_token %}
@@ -25,10 +56,23 @@
 <img class="card-img-top" src="{{ listing.imageURL }}" alt="{{ listing.title }}">
 <p>Details: {{ listing.description }}</p>
 <p>{{ listing.onwer }}</p>
-<h5>Price: ${{ listing.price }}</h5>
+<h5>Initial Price: ${{ listing.price.bid  }}</h5>
+
+{% if user.is_authenticated %}
+    <form action="{% url 'addBid' id=listing.id %}" method="POST">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="price">Add Bid</label>
+            <input type="number" min="0" name="newBid" placeholder="Add New Bid">
+        
+            <button type="submit" class="btn btn-warning" > Add </button>
+        </div>
+    </form>
+
+{% endif %}
 
 <div class="row mx-3">
-    <h2>Comment</h2>
+    <h2></h2>
     {% if user.is_authenticated %}
         <form action="{% url 'addComment' id=listing.id %}" method="POST">
             <input type="text" name="newComment" placeholder="Add New Comment">
@@ -38,6 +82,7 @@
 
     {% endif %}
 </div>
+<br>
 <div>
     <ul class="list-group">
     {% for comment in allComments %}
@@ -47,5 +92,4 @@
         </li>
     {% endfor %}
 </div>
-
 {% endblock %}
