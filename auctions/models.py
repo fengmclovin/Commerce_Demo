@@ -1,4 +1,6 @@
 
+from pyexpat import model
+from unicodedata import bidirectional
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
@@ -22,11 +24,13 @@ class Bidding(models.Model):
     def __str__(self):
         return f"{self.bid}"
 
+
 class Listing(models.Model):
     title = models.CharField(max_length=30)
     description = models.CharField(max_length=300)
     imageURL = models.CharField(max_length=1000)
-    price = models.FloatField()
+    price = models.ForeignKey(
+        Bidding, on_delete=models.CASCADE, blank=True, null=True, related_name="bidPrice")
     isActive = models.BooleanField(default=True)
     owner = models.ForeignKey(
         User, on_delete=models.CASCADE, blank=True, null=True, related_name="user")
@@ -37,6 +41,7 @@ class Listing(models.Model):
 
     def __str__(self):
         return f"{self.title}"
+
 
 class Comment(models.Model):
     author = models.ForeignKey(

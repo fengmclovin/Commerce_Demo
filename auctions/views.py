@@ -1,3 +1,4 @@
+from turtle import title
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
@@ -6,17 +7,21 @@ from django.urls import reverse
 
 from .models import User, Category, Listing, Comment, Bidding
 
+
 def listing(request, id):
     listingData = Listing.objects.get(pk=id)
     # isListingInWatchlist = request.user in listingData.watchlist.all()
     isListingInWatchlist = listingData.watchlist.filter(
         id=request.user.id).exists()
+    allComments = Comment.objects.filter(listing=listingData)
+    isOwner = request.user.username == listingData.owner.username
     return render(request, "auctions/listing.html", {
         "listing": listingData,
         "isListingInWatchlist": isListingInWatchlist,
         "allComments": allComments,
         "isOwner": isOwner
     })
+
 
 def close_auction(request, id):
     listingData = Listing.objects.get(pk=id)
@@ -37,6 +42,7 @@ def close_auction(request, id):
         "message": "Auction Closed"
     })
 
+
 def remove_watchlist(request, id):
     listtingData = Listing.objects.get(pk=id)
     currentUser = request.user
@@ -50,12 +56,22 @@ def add_watchlist(request, id):
     listtingData.watchlist.add(currentUser)
     return HttpResponseRedirect(reverse("listing", args=(id, )))
 
+# args=(id, ) is creating a tuple with a single element,
+# which is the id. The trailing comma distinguishes it as a tuple.
+# If you omit the comma, it will be treated as a regular expression with parentheses, not a tuple.
+
+# The main difference between a tuple and a list is that a tuple is immutable,
+# meaning its elements cannot be changed after the tuple is created.
+
+
 def index(request):
     activeListings = Listing.objects.filter(isActive=True)
+    allCategories = Category.objects.all()
     return render(request, "auctions/index.html", {
         "listings": activeListings,
         "categories": allCategories
     })
+
 
 def displayCategory(request):
     if request.method == "POST":
@@ -122,10 +138,6 @@ def register(request):
         return render(request, "auctions/register.html")
 
 
-def category(request):
-    return render(request, "auctions/categories.html")
-
-
 def watchlist(request):
     currentUser = request.user
     listings = currentUser.listing_watchlist.all()
@@ -141,7 +153,6 @@ def add_bid(request, id):
     isListingInWatchlist = listingData.watchlist.filter(
         id=request.user.id).exists()
     allComments = Comment.objects.filter(listing=listingData)
-
     isOwner = request.user.username == listingData.owner.username
 
     if float(newBid) > listingData.price.bid:
@@ -168,6 +179,7 @@ def add_bid(request, id):
             "isOwner": isOwner
         })
 
+
 def add_comment(request, id):
     currentUser = request.user
     listingData = Listing.objects.get(pk=id)
@@ -180,6 +192,10 @@ def add_comment(request, id):
     )
     newComment.save()
     return HttpResponseRedirect(reverse("listing", args=(id, )))
+
+
+def category(request):
+    return render(request, "auctions/categories.html")
 
 
 def create_listing(request):
@@ -200,7 +216,6 @@ def create_listing(request):
 
         bid = Bidding(bid=float(price), user=currentUser)
         bid.save()
-
 
         newListing = Listing(
             title=title,

@@ -19,9 +19,13 @@
 
 <div class="container">
 {% if not listing.isActive and user == listing.price.user %}
-    <div class="alert alert-success" role="alert">   
+    <div class="alert alert-success" role="alert">
+         
         {{ "Auction Won" }}
+
     </div>
+       
+
 {% endif %}
 </div>
 
